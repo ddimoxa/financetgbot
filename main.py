@@ -185,12 +185,13 @@ class DatabaseManager:
     def find_category_by_keyword(self, user_id, text, transaction_type):
         """Находит категорию по ключевому слову."""
         categories = self.get_all_categories(user_id, transaction_type)
-        text = text.lower()
+        text_lower = text.lower()
+        words_in_text = set(text_lower.split())
 
         for category in categories:
-            keywords = category['keywords'].lower().split(',')
+            keywords = [kw.strip().lower() for kw in category['keywords'].split(',') if kw.strip()]
             for keyword in keywords:
-                if keyword and keyword.strip() in text:
+                if keyword in text_lower or keyword in words_in_text:
                     return category['name']
 
         # Если не нашли категорию по ключевым словам
